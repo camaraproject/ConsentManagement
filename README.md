@@ -17,7 +17,11 @@ Sandbox API Repository to describe, develop, document, and test the ConsentManag
 
 * Service API(s) “ConsentManagement” (see APIBacklog.md) 
 * The API(s) provide(s) the API consumer with the ability to:  
-  * §Short API scope description§ !! Add here a scope description according to the API proposal
+  * **Create Consent**: Allows API Consumers to create a new Consent for a User, specifying the requested scope(s) and Purpose. The API Consumer must provide the necessary information to capture the User's Consent.
+  * **Update Consent**: Enables API Consumers to update an existing Consent and change its status.
+  * **Retrieve Consent Information**: Allows API Consumers to retrieve information about existing Consents for a User based on specified scope(s) and Purpose. This operation can also return the Consent texts presented to the User during the Consent Capture process if requested.
+
+    It is important to note that the API Provider remains fully responsible for Consent storage, auditing and transparency. Access to this functionality is restricted to trusted API Consumers in accordance with the API Provider's policy. This API only applies to scenarios involving the legal basis of Consent. Scenarios involving a different legal basis for data processing are excluded and would be handled by the API Provider through non-delegated mechanisms.
 * Describe, develop, document, and test the API(s)
 * Started: December 2025
 <!-- * Incubating stage since: {{incubation date}} --> 
