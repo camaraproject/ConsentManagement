@@ -11,7 +11,7 @@
 
 Sandbox API Repository to describe, develop, document, and test the ConsentManagement Service API(s) within the Working Group [Identity And Consent Management](https://lf-camaraproject.atlassian.net/wiki/spaces/CAM/pages/14561383/Identity+Consent+Management).
 
-* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/spaces/CAM/)
+* API Repository [wiki page](https://lf-camaraproject.atlassian.net/wiki/x/WgDDH)
 
 ## Scope
 
