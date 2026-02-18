@@ -143,7 +143,7 @@ paths:
                     creationDate: "2025-07-03T14:27:08.312+02:00"
                     expirationDate: "2026-07-03T14:27:08.312+02:00"
         "400":
-          $ref: "#/components/responses/Generic400"
+          $ref: "#/components/responses/Consent400"
         "401":
           $ref: "#/components/responses/Generic401"
         "403":
@@ -228,7 +228,7 @@ paths:
       description: |
         This operation allows the API Consumer to retrieve information about the Consent(s) for a given User, scope(s) and Purpose. The API Consumer is identified by the `client_id` parameter deduced from the access token.
 
-        The API Consumer can request that the texts intended for or previously shown to the User during the Consent Capture process for the requested scope(s) and Purpose be included in the response. If so, the `ConsentText` field will be included in the response for each matching Consent Information entry.
+        The API Consumer can request that the texts intended for or previously shown to the User during the Consent Capture process for the requested scope(s) and Purpose be included in the response. If so, the `consentText` field will be included in the response for each matching Consent Information entry.
 
         The operation response may require more than one array item for the requested scope(s) and Purpose. For example, this may occur when the requested scopes relate to multiple APIs with independent User Consents.
 
@@ -279,10 +279,11 @@ paths:
                         - "location-verification:verify"
                       purpose: "dpv:FraudPreventionAndDetection"
                       consentStatus: "PENDING"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                 RETRIEVE_CONSENT_INFO_REQUESTED:
                   summary: Retrieve Consent Information REQUESTED
                   description: Retrieve Consent Information when the User Consent is in REQUESTED status
@@ -293,10 +294,11 @@ paths:
                       consentId: "consent-123456"
                       consentStatus: "REQUESTED"
                       creationDate: "2025-07-03T14:27:08.312+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                 RETRIEVE_CONSENT_INFO_DENIED:
                   summary: Retrieve Consent Information DENIED
                   value:
@@ -307,10 +309,11 @@ paths:
                       consentStatus: "DENIED"
                       creationDate: "2025-07-03T14:27:08.312+02:00"
                       expirationDate: "2026-07-03T14:27:08.312+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                 RETRIEVE_CONSENT_INFO_GRANTED:
                   summary: Retrieve Consent Information GRANTED
                   value:
@@ -321,10 +324,11 @@ paths:
                       consentStatus: "GRANTED"
                       creationDate: "2025-07-03T14:27:08.312+02:00"
                       expirationDate: "2026-07-03T14:27:08.312+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                 RETRIEVE_CONSENT_INFO_EXPIRED:
                   summary: Retrieve Consent Information EXPIRED
                   value:
@@ -335,10 +339,11 @@ paths:
                       consentStatus: "EXPIRED"
                       creationDate: "2025-07-03T14:27:08.312+02:00"
                       expirationDate: "2025-10-03T14:27:08.312+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                 RETRIEVE_CONSENT_INFO_MULTIPLE_APIS:
                   summary: Retrieve Consent Information for multiple APIs
                   description: Retrieve Consent Information when the requested scopes relate to multiple APIs
@@ -350,10 +355,11 @@ paths:
                       consentStatus: "GRANTED"
                       creationDate: "2025-07-03T14:27:08.312+02:00"
                       expirationDate: "2026-07-03T14:27:08.312+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with location verification for fraud prevention."
                         consentTextId: "pp-sha256-a1b2c3d4..."
+                        lastUpdate: "2025-07-03T14:27:08.312+02:00"
                     - scopes:
                         - "device-roaming-status:read"
                       purpose: "dpv:FraudPreventionAndDetection"
@@ -361,10 +367,11 @@ paths:
                       consentStatus: "DENIED"
                       creationDate: "2025-08-15T10:00:00.000+02:00"
                       expirationDate: "2026-08-15T10:00:00.000+02:00"
-                      ConsentText:
+                      consentText:
                         title: "Consent Required"
                         description: "Please provide your consent to proceed with roaming verification for fraud prevention."
                         consentTextId: "pp-sha256-e5f6g7h8..."
+                        lastUpdate: "2025-08-15T10:00:00.000+02:00"
                 RETRIEVE_CONSENT_INFO_EMPTY_ARRAY:
                   summary: Retrieve Consent Information with no matching API(s) under Consent legal basis
                   description: Retrieve Consent Information when there are no matching API(s) under Consent legal basis for the specified scope(s) and Purpose
@@ -533,7 +540,7 @@ components:
           description: |
             Indicates whether the texts intended for or previously shown to the User during the Consent Capture process for the requested scope(s) and Purpose should be included in the response.
 
-            If set to `true`, the `ConsentText` field will be included in the response for each matching Consent Information entry. If set to `false`, the `ConsentText` field will be omitted from the response.
+            If set to `true`, the `consentText` field will be included in the response for each matching Consent Information entry. If set to `false`, the `consentText` field will be omitted from the response.
           example: true
     RetrieveConsentInfoResponseBody:
       type: array
@@ -557,7 +564,7 @@ components:
           example: "consent-123456"
         consentStatus:
           $ref: "#/components/schemas/ConsentStatus"
-        ConsentText:
+        consentText:
           $ref: "#/components/schemas/ConsentText"
         creationDate:
           $ref: "#/components/schemas/CreationDate"
@@ -585,7 +592,7 @@ components:
       description: |
         The texts presented to the User during the Consent Capture process for the requested scope(s) and Purpose.
 
-        It is composed of a title and a description, both of which are localized texts provided in the language indicated by the `Content-Language` response header (if present). There is also a unique, immutable string identifier, called a `consentTextId`, that designates a specific, versioned instance of a legal text.
+        It is composed of a title and a description, both of which are localized texts provided in the language indicated by the `Content-Language` response header (if present). There is also a unique, immutable string identifier, called a `consentTextId`, that designates a specific, versioned instance of a legal text. An optional `lastUpdate` timestamp can be included to indicate when the consent text version was last updated by the API Provider.
 
         These texts are only included in the response when explicitly requested by setting the `requestConsentText` field to `true` in the request.
       required:
@@ -603,6 +610,14 @@ components:
           example: "Please provide your consent to proceed with location verification for fraud prevention."
         consentTextId:
           $ref: "#/components/schemas/ConsentTextId"
+        lastUpdate:
+          type: string
+          format: date-time
+          description: |
+            The date and time when this consent text version was last updated.
+
+            It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z).
+          example: "2025-07-03T14:27:08.312+02:00"
     LanguageTags:
       type: string
       description: List of Language tags that identify natural languages, following [BCP 47](https://tools.ietf.org/html/bcp47) standard.
@@ -674,6 +689,38 @@ components:
                 status: 400
                 code: INVALID_ARGUMENT
                 message: Client specified an invalid argument, request body or query param.
+    Consent400:
+      description: Bad Request
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 400
+                  code:
+                    enum:
+                      - INVALID_ARGUMENT
+                      - CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
+          examples:
+            GENERIC_400_INVALID_ARGUMENT:
+              description: Invalid Argument. Generic Syntax Exception
+              value:
+                status: 400
+                code: INVALID_ARGUMENT
+                message: Client specified an invalid argument, request body or query param.
+            INVALID_CONSENT_TEXT_ID:
+              description: The provided consentTextId does not match any valid consent text version available for the requested scope(s) and Purpose.
+              value:
+                status: 400
+                code: CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
+                message: The consentTextId provided is either invalid or does not exist.
     Generic401:
       description: Unauthorized
       headers:
