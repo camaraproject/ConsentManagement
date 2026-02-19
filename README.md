@@ -32,7 +32,6 @@ Sandbox API Repository to describe, develop, document, and test the ConsentManag
 ## Release Information
 
 The repository has no (pre)releases yet, work in progress is within the main branch.
-
 <!-- CAMARA:RELEASE-INFO:END -->
 
 ## Contributing
