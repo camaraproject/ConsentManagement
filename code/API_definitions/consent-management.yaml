@@ -52,26 +52,29 @@ info:
     The following diagram illustrates the allowed status transitions:
 
     ```
-               ┌─────────────────────┐
-               │  PENDING/REQUESTED  │
-               └──┬───────────────┬──┘
-                  │               │
-            User Rejects    User Approves
-                  │               │
-      ┌───────────▼───┐  Rev. ┌───▼───────────┐
-      │               │◄──────┤               │
-      │    DENIED     │       │    GRANTED    │
-      │               │───────►               │
-      └─────┬───▲─────┘Re-con.└──────┬───▲────┘
-            │   │                    │   │
-        TTL │   │ Renewed        TTL │   │ Renewed
-    Reached │   │ & Rejected Reached │   │ & Approved
-            │   │                    │   │
-      ┌─────▼───┴────────────────────▼───┴────┐
-      │                                       │
-      │                EXPIRED                │
-      │                                       │
-      └───────────────────────────────────────┘
+                +-----------------+
+                |PENDING/REQUESTED|
+                +--+------------+-+
+                   |            | 
+             User Rejects  User Approves
+          +--------+            +-------+
+          |                             |
+    +-----v--------+            +-------v------+
+    |              <-Revocation-+              |
+    |   DENIED     +-Re-consent->   GRANTED    |
+    |              +-+        +-+              |
+    +---^----------+ |        | +--------^-----+
+        |            |        |          |
+        |       TTL Reached   |          |
+        |            |        |          |
+        |            |   TTL Reached     |
+        |            |        |          |
+     Renewed         |        |       Renewed
+    & Rejected    +--v--------v--+   & Approved
+        |         |              |       |
+        +---------+   EXPIRED    +-------+
+                  |              |
+                  +--------------+
     ```
 
     # Authorization and authentication
