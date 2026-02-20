@@ -26,6 +26,54 @@ info:
 
     It is important to note that the API Provider remains fully responsible for Consent storage, auditing and transparency. Access to this functionality is restricted to trusted API Consumers in accordance with the API Provider's policy. This API only applies to scenarios involving the legal basis of Consent. Scenarios involving a different legal basis for data processing are excluded and would be handled by the API Provider through non-delegated mechanisms.
 
+    ## Consent status lifecycle
+
+    A User Consent follows a defined status lifecycle. The possible statuses and their allowed transitions are described below and illustrated in the diagram:
+
+    - **PENDING**: Initial status indicating that the User Consent has not yet been requested from the User. No Consent record exists yet.
+    - **REQUESTED**: The User Consent has been requested from the User, but the User has not yet responded. A Consent record exists with a `consentId`.
+    - **GRANTED**: The User has approved the Consent, allowing the requested data processing. This status is set when creating or updating a Consent with status `GRANTED`.
+    - **DENIED**: The User has rejected the Consent. This status is set when creating or updating a Consent with status `DENIED`.
+    - **EXPIRED**: The User Consent has expired because its TTL (time-to-live) has been reached. Both `GRANTED` and `DENIED` Consents can expire.
+
+    The allowed transitions are:
+
+    - `PENDING/REQUESTED` → `GRANTED`: The User approves the Consent.
+    - `PENDING/REQUESTED` → `DENIED`: The User rejects the Consent.
+    - `GRANTED` → `DENIED`: The User revokes a previously granted Consent.
+    - `DENIED` → `GRANTED`: The User reconsents after previously denying.
+    - `GRANTED` → `EXPIRED`: The Consent TTL is reached.
+    - `DENIED` → `EXPIRED`: The Consent TTL is reached.
+    - `EXPIRED` → `GRANTED`: The User renews and approves an expired Consent.
+    - `EXPIRED` → `DENIED`: The User renews and rejects an expired Consent.
+
+    Note that API Consumers can only set a Consent status to `GRANTED` or `DENIED` via the `createConsent` and `updateConsent` operations. The `PENDING`, `REQUESTED`, and `EXPIRED` statuses are managed by the API Provider.
+
+    The following diagram illustrates the allowed status transitions:
+
+    ```
+               ┌─────────────────────┐
+               │  PENDING/REQUESTED  │
+               └──┬───────────────┬──┘
+                  │               │
+            User Rejects    User Approves
+                  │               │
+      ┌───────────▼───┐  Rev. ┌───▼───────────┐
+      │               │◄──────┤               │
+      │    DENIED     │       │    GRANTED    │
+      │               │───────►               │
+      └─────┬───▲─────┘Re-con.└──────┬───▲────┘
+            │   │                    │   │
+        TTL │   │ Renewed        TTL │   │ Renewed
+    Reached │   │ & Rejected Reached │   │ & Approved
+            │   │                    │   │
+      ┌─────▼───┴────────────────────▼───┴────┐
+      │                                       │
+      │                EXPIRED                │
+      │                                       │
+      └───────────────────────────────────────┘
+    ```
+
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
