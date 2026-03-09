@@ -34,7 +34,7 @@ info:
     - **REQUESTED**: The User Consent has been requested from the User, but the User has not yet responded. A Consent record exists with a `consentId`.
     - **GRANTED**: The User has approved the Consent, allowing the requested data processing. This status is set when creating or updating a Consent with status `GRANTED`.
     - **DENIED**: The User has rejected the Consent. This status is set when creating or updating a Consent with status `DENIED`.
-    - **EXPIRED**: The User Consent has expired because its TTL (time-to-live) has been reached. Both `GRANTED` and `DENIED` Consents can expire.
+    - **EXPIRED**: The User Consent has expired because its TTL (time-to-live) has been reached. Both `GRANTED` and `DENIED` Consents can expire. The API Provider determines the expiration date based on its internal policies.
 
     The allowed transitions are:
 
