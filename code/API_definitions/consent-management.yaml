@@ -30,7 +30,7 @@ info:
 
     A User Consent follows a defined status lifecycle. The possible statuses and their allowed transitions are described below and illustrated in the diagram:
 
-    - **PENDING**: Initial status indicating that the User Consent has not yet been requested from the User. No Consent record exists yet.
+    - **PENDING**: Initial status indicating that the User Consent has not yet been requested from the User. No Consent record (`consentId`) exists at this stage.
     - **REQUESTED**: The User Consent has been requested from the User, but the User has not yet responded. A Consent record exists with a `consentId`.
     - **GRANTED**: The User has approved the Consent, allowing the requested data processing. This status is set when creating or updating a Consent with status `GRANTED`.
     - **DENIED**: The User has rejected the Consent. This status is set when creating or updating a Consent with status `DENIED`.
@@ -42,10 +42,10 @@ info:
     - `PENDING/REQUESTED` → `DENIED`: The User rejects the Consent.
     - `GRANTED` → `DENIED`: The User revokes a previously granted Consent.
     - `DENIED` → `GRANTED`: The User reconsents after previously denying.
-    - `GRANTED` → `EXPIRED`: The Consent TTL is reached.
-    - `DENIED` → `EXPIRED`: The Consent TTL is reached.
-    - `EXPIRED` → `GRANTED`: The User renews and approves an expired Consent.
-    - `EXPIRED` → `DENIED`: The User renews and rejects an expired Consent.
+    - `GRANTED` → `EXPIRED`: The Consent TTL is reached and the Consent expires.
+    - `DENIED` → `EXPIRED`: The Consent TTL is reached and the Consent expires.
+    - `EXPIRED` → `GRANTED`: The User renews and approves an expired Consent. It requires the API Consumer to recapture the User Consent and update the Consent status to `GRANTED` via the `updateConsent` operation.
+    - `EXPIRED` → `DENIED`: The User renews and rejects an expired Consent. It requires the API Consumer to recapture the User Consent and update the Consent status to `DENIED` via the `updateConsent` operation.
 
     Note that API Consumers can only set a Consent status to `GRANTED` or `DENIED` via the `createConsent` and `updateConsent` operations. The `PENDING`, `REQUESTED`, and `EXPIRED` statuses are managed by the API Provider.
 
