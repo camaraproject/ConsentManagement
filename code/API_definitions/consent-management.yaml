@@ -194,11 +194,11 @@ paths:
                     creationDate: "2025-07-03T14:27:08.312+02:00"
                     expirationDate: "2026-07-03T14:27:08.312+02:00"
         "400":
-          $ref: "#/components/responses/Consent400"
+          $ref: "#/components/responses/CreateConsent400"
         "401":
           $ref: "#/components/responses/Generic401"
         "403":
-          $ref: "#/components/responses/Consent403"
+          $ref: "#/components/responses/ConsentManagement403"
         "404":
           $ref: "#/components/responses/Generic404"
         "409":
@@ -272,7 +272,7 @@ paths:
         "403":
           $ref: "#/components/responses/Generic403"
         "404":
-          $ref: "#/components/responses/Generic404"
+          $ref: "#/components/responses/UpdateConsent404"
   /consents/retrieve-info:
     post:
       summary: Retrieve Consent Information
@@ -432,7 +432,7 @@ paths:
         "401":
           $ref: "#/components/responses/Generic401"
         "403":
-          $ref: "#/components/responses/Consent403"
+          $ref: "#/components/responses/ConsentManagement403"
         "404":
           $ref: "#/components/responses/Generic404"
         "422":
@@ -542,6 +542,8 @@ components:
       type: object
       description: |
         The request body for the updateConsent operation. It allows updating the status of an existing User Consent.
+      required:
+        - consentStatus
       properties:
         consentStatus:
           $ref: "#/components/schemas/UpdateConsentStatus"
@@ -740,7 +742,7 @@ components:
                 status: 400
                 code: INVALID_ARGUMENT
                 message: Client specified an invalid argument, request body or query param.
-    Consent400:
+    CreateConsent400:
       description: Bad Request
       headers:
         x-correlator:
@@ -822,7 +824,7 @@ components:
                 status: 403
                 code: PERMISSION_DENIED
                 message: Client does not have sufficient permissions to perform this action.
-    Consent403:
+    ConsentManagement403:
       description: Forbidden
       headers:
         x-correlator:
@@ -886,6 +888,31 @@ components:
                 status: 404
                 code: IDENTIFIER_NOT_FOUND
                 message: Phone number not found.
+    UpdateConsent404:
+      description: Not found
+      headers:
+        x-correlator:
+          $ref: "#/components/headers/x-correlator"
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: "#/components/schemas/ErrorInfo"
+              - type: object
+                properties:
+                  status:
+                    enum:
+                      - 404
+                  code:
+                    enum:
+                      - NOT_FOUND
+          examples:
+            GENERIC_404_NOT_FOUND:
+              description: Resource is not found
+              value:
+                status: 404
+                code: NOT_FOUND
+                message: The specified resource is not found.
     Generic409:
       description: Conflict
       headers:
