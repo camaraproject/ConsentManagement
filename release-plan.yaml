@@ -20,13 +20,13 @@ repository:
 
   # Release type being prepared (must be set before release can be triggered)
   # Options: none | pre-release-alpha | pre-release-rc | public-release | maintenance-release
-  target_release_type: none
+  target_release_type: pre-release-rc
 
 # Dependencies on Commonalities and ICM releases
 # Update per ReleaseManagement requirements for each release cycle
 dependencies:
-  commonalities_release: r3.4
-  identity_consent_management_release: r3.3
+  commonalities_release: r4.2
+  identity_consent_management_release: r4.2
 
 # APIs in this repository
 # Replace the placeholder below when planning a release:
@@ -35,7 +35,7 @@ dependencies:
 apis:
   - api_name: consent-management
     target_api_version: 0.1.0
-    target_api_status: draft
+    target_api_status: rc
     main_contacts:
       - jpengar
       - AxelNennker
