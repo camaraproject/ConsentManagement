@@ -114,7 +114,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.6
+  x-camara-commonalities: 0.8.0
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/ConsentInfo
@@ -440,9 +440,7 @@ paths:
 components:
   headers:
     x-correlator:
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
     Content-Language:
       description: |
         The language of the response content, following the standard defined in [RFC 7231, Section 5.3.5](https://datatracker.ietf.org/doc/html/rfc7231#section-5.3.5) using language tags as defined by [BCP 47](https://tools.ietf.org/html/bcp47).
@@ -452,11 +450,7 @@ components:
         $ref: "#/components/schemas/LanguageTags"
   parameters:
     x-correlator:
-      name: x-correlator
-      in: header
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
     Accept-Language:
       name: Accept-Language
       in: header
@@ -468,15 +462,9 @@ components:
         $ref: "#/components/schemas/LanguageTags"
   schemas:
     XCorrelator:
-      description: Value for the x-correlator
-      type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
-      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/XCorrelator"
     PhoneNumber:
-      type: string
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
-      pattern: '^\+[1-9][0-9]{4,14}$'
-      example: "+123456789"
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/PhoneNumber"
     CreateConsentRequestBody:
       type: object
       description: |
@@ -701,21 +689,7 @@ components:
         It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z).
       example: "2026-07-03T14:27:08.312+02:00"
     ErrorInfo:
-      type: object
-      required:
-        - status
-        - code
-        - message
-      properties:
-        status:
-          type: integer
-          description: HTTP response status code
-        code:
-          type: string
-          description: A human-readable code to describe the error
-        message:
-          type: string
-          description: A human-readable description of what the event represents
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
   responses:
     Generic400:
       description: Bad Request
@@ -775,30 +749,7 @@ components:
                 code: CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
                 message: The consentTextId provided is either invalid or does not exist.
     Generic401:
-      description: Unauthorized
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Request cannot be authenticated
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
     Generic403:
       description: Forbidden
       headers:
@@ -857,37 +808,7 @@ components:
                 code: CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE
                 message: The requested scope(s) and Purpose combination is not allowed for this API Consumer.
     Generic404:
-      description: Not found
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 404
-                  code:
-                    enum:
-                      - NOT_FOUND
-                      - IDENTIFIER_NOT_FOUND
-          examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
-            GENERIC_404_IDENTIFIER_NOT_FOUND:
-              description: Some identifier cannot be matched to a device
-              value:
-                status: 404
-                code: IDENTIFIER_NOT_FOUND
-                message: Phone number not found.
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
     UpdateConsent404:
       description: Not found
       headers:
@@ -979,5 +900,4 @@ components:
                 message: The phone number is already identified by the access token.
   securitySchemes:
     openId:
-      type: openIdConnect
-      openIdConnectUrl: https://example.org/.well-known/openid-configuration
+      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
