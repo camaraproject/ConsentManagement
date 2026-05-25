@@ -226,6 +226,7 @@ paths:
           description: The unique identifier of the User Consent
           schema:
             type: string
+            maxLength: 256
           example: "consent-123456"
       requestBody:
         required: true
@@ -461,8 +462,6 @@ components:
       schema:
         $ref: "#/components/schemas/LanguageTags"
   schemas:
-    XCorrelator:
-      $ref: "../common/CAMARA_common.yaml#/components/schemas/XCorrelator"
     PhoneNumber:
       $ref: "../common/CAMARA_common.yaml#/components/schemas/PhoneNumber"
     CreateConsentRequestBody:
@@ -488,8 +487,11 @@ components:
     Scopes:
       type: array
       minItems: 1
+      maxItems: 50
       items:
         type: string
+        description: A string representing a specific access right or action an API Consumer requests from the User for their data.
+        maxLength: 256
       description: |
         List of requested scopes. The scope is a string that represents the access rights that the API Consumer is requesting from the User.
       example:
@@ -497,6 +499,7 @@ components:
     Purpose:
       type: string
       pattern: '^dpv:[a-zA-Z0-9]+$'
+      maxLength: 256
       description: |
         The reason for which personal data will be processed by the API Consumer. CAMARA defines a standard set of Purposes which can be used by API Consumers to specify the reason for their intended personal data processing. CAMARA uses the [W3C Data Privacy Vocabulary](https://w3c.github.io/dpv/2.0/dpv/) (DPV) to represent these purposes e.g. `dpv:FraudPreventionAndDetection` or `dpv:RequestedServiceProvision`.
       example: "dpv:FraudPreventionAndDetection"
@@ -520,6 +523,7 @@ components:
       properties:
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         creationDate:
@@ -555,6 +559,7 @@ components:
       properties:
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         creationDate:
@@ -585,11 +590,13 @@ components:
           example: true
     RetrieveConsentInfoResponseBody:
       type: array
+      maxItems: 100
       description: The response body for the retrieveConsentInfo operation
       items:
         $ref: "#/components/schemas/ConsentInfoItem"
     ConsentInfoItem:
       type: object
+      description: A Consent Information entry for a given User, scope(s) and Purpose.
       required:
         - scopes
         - purpose
@@ -601,6 +608,7 @@ components:
           $ref: "#/components/schemas/Purpose"
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         consentStatus:
@@ -643,10 +651,12 @@ components:
       properties:
         title:
           type: string
+          maxLength: 256
           description: The localized text title
           example: "Consent Required"
         description:
           type: string
+          maxLength: 4096
           description: The localized text description
           example: "Please provide your consent to proceed with location verification for fraud prevention."
         consentTextId:
@@ -654,6 +664,7 @@ components:
         lastUpdate:
           type: string
           format: date-time
+          maxLength: 64
           description: |
             The date and time when this consent text version was last updated.
 
@@ -661,10 +672,12 @@ components:
           example: "2025-07-03T14:27:08.312+02:00"
     LanguageTags:
       type: string
+      maxLength: 64
       description: List of Language tags that identify natural languages, following [BCP 47](https://tools.ietf.org/html/bcp47) standard.
       example: "en-US"
     ConsentTextId:
       type: string
+      maxLength: 256
       description: |
         This is a unique, immutable (e.g. hash-based) string identifier that designates a specific version of a legal text presented to the User during the Consent Capture process.
 
@@ -675,6 +688,7 @@ components:
     CreationDate:
       type: string
       format: date-time
+      maxLength: 64
       description: |
         The date and time at which the User Consent was created.
 
@@ -683,6 +697,7 @@ components:
     ExpirationDate:
       type: string
       format: date-time
+      maxLength: 64
       description: |
         The date and time at which the validity of the User Consent is set to expire or has expired (when applicable). The API Provider determines the expiration date based on its internal policies.
 
