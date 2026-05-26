@@ -77,14 +77,17 @@ info:
                   +--------------+
     ```
 
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:BEGIN -->
     # Authorization and authentication
 
     The "Camara Security and Interoperability Profile" provides details of how an API consumer requests an access token. Please refer to Identity and Consent Management (https://github.com/camaraproject/IdentityAndConsentManagement/) for the released version of the profile.
 
-    The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared Purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
+    The specific authorization flows to be used will be agreed upon during the onboarding process, happening between the API consumer and the API provider, taking into account the declared purpose for accessing the API, whilst also being subject to the prevailing legal framework dictated by local legislation.
 
     In cases where personal data is processed by the API and users can exercise their rights through mechanisms such as opt-in and/or opt-out, the use of three-legged access tokens is mandatory. This ensures that the API remains in compliance with privacy regulations, upholding the principles of transparency and user-centric privacy-by-design.
+    <!-- CAMARA:MANDATORY:authorization-and-authentication:END -->
 
+    <!-- CAMARA:MANDATORY:identifying-phone-number-from-access-token:BEGIN -->
     # Identifying the phone number from the access token
 
     This API requires the API consumer to identify a phone number as the subject of the API as follows:
@@ -98,14 +101,23 @@ info:
     - If the subject cannot be identified from the access token and the optional `phoneNumber` field is not included in the request, then the server will return an error with the `422 MISSING_IDENTIFIER` error code.
 
     - If the subject can be identified from the access token and the optional `phoneNumber` field is also included in the request, then the server will return an error with the `422 UNNECESSARY_IDENTIFIER` error code. This will be the case even if the same phone number is identified by these two methods, as the server is unable to make this comparison.
+    <!-- CAMARA:MANDATORY:identifying-phone-number-from-access-token:END -->
 
+    <!-- CAMARA:MANDATORY:additional-error-responses:BEGIN -->
     # Additional CAMARA error responses
 
-    The list of error codes in this API specification is not exhaustive. Therefore the API specification may not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
+    The list of error codes in this API specification is not exhaustive. Therefore the API specification MAY not document some non-mandatory error statuses as indicated in `CAMARA API Design Guide`.
 
     Please refer to the `CAMARA_common.yaml` of the Commonalities Release associated to this API version for a complete list of error responses. The applicable Commonalities Release can be identified in the `API Readiness Checklist` document associated to this API version.
 
     As a specific rule, error `501 - NOT_IMPLEMENTED` can be only a possible error response if it is explicitly documented in the API.
+    <!-- CAMARA:MANDATORY:additional-error-responses:END -->
+
+    <!-- CAMARA:MANDATORY:request-body-strictness:BEGIN -->
+    # Request body strictness
+
+    This API rejects requests with JSON request bodies that contain properties not declared in this specification, at any nesting level. Unknown properties result in a `400 INVALID_ARGUMENT` response.
+    <!-- CAMARA:MANDATORY:request-body-strictness:END -->
 
     # Further info and support
 
@@ -114,7 +126,7 @@ info:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0.html
   version: wip
-  x-camara-commonalities: 0.6
+  x-camara-commonalities: 0.8.0
 externalDocs:
   description: Product documentation at CAMARA
   url: https://github.com/camaraproject/ConsentInfo
@@ -226,6 +238,7 @@ paths:
           description: The unique identifier of the User Consent
           schema:
             type: string
+            maxLength: 256
           example: "consent-123456"
       requestBody:
         required: true
@@ -440,9 +453,7 @@ paths:
 components:
   headers:
     x-correlator:
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/headers/x-correlator"
     Content-Language:
       description: |
         The language of the response content, following the standard defined in [RFC 7231, Section 5.3.5](https://datatracker.ietf.org/doc/html/rfc7231#section-5.3.5) using language tags as defined by [BCP 47](https://tools.ietf.org/html/bcp47).
@@ -452,11 +463,7 @@ components:
         $ref: "#/components/schemas/LanguageTags"
   parameters:
     x-correlator:
-      name: x-correlator
-      in: header
-      description: Correlation id for the different services
-      schema:
-        $ref: "#/components/schemas/XCorrelator"
+      $ref: "../common/CAMARA_common.yaml#/components/parameters/x-correlator"
     Accept-Language:
       name: Accept-Language
       in: header
@@ -467,16 +474,8 @@ components:
       schema:
         $ref: "#/components/schemas/LanguageTags"
   schemas:
-    XCorrelator:
-      description: Value for the x-correlator
-      type: string
-      pattern: ^[a-zA-Z0-9-_:;.\/<>{}]{0,256}$
-      example: "b4333c46-49c0-4f62-80d7-f0ef930f1c46"
     PhoneNumber:
-      type: string
-      description: A public identifier addressing a telephone subscription. In mobile networks it corresponds to the MSISDN (Mobile Station International Subscriber Directory Number). In order to be globally unique it has to be formatted in international format, according to E.164 standard, prefixed with '+'.
-      pattern: '^\+[1-9][0-9]{4,14}$'
-      example: "+123456789"
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/PhoneNumber"
     CreateConsentRequestBody:
       type: object
       description: |
@@ -500,8 +499,11 @@ components:
     Scopes:
       type: array
       minItems: 1
+      maxItems: 50
       items:
         type: string
+        description: A string representing a specific access right or action an API Consumer requests from the User for their data.
+        maxLength: 256
       description: |
         List of requested scopes. The scope is a string that represents the access rights that the API Consumer is requesting from the User.
       example:
@@ -509,6 +511,7 @@ components:
     Purpose:
       type: string
       pattern: '^dpv:[a-zA-Z0-9]+$'
+      maxLength: 256
       description: |
         The reason for which personal data will be processed by the API Consumer. CAMARA defines a standard set of Purposes which can be used by API Consumers to specify the reason for their intended personal data processing. CAMARA uses the [W3C Data Privacy Vocabulary](https://w3c.github.io/dpv/2.0/dpv/) (DPV) to represent these purposes e.g. `dpv:FraudPreventionAndDetection` or `dpv:RequestedServiceProvision`.
       example: "dpv:FraudPreventionAndDetection"
@@ -532,6 +535,7 @@ components:
       properties:
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         creationDate:
@@ -567,6 +571,7 @@ components:
       properties:
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         creationDate:
@@ -597,11 +602,13 @@ components:
           example: true
     RetrieveConsentInfoResponseBody:
       type: array
+      maxItems: 100
       description: The response body for the retrieveConsentInfo operation
       items:
         $ref: "#/components/schemas/ConsentInfoItem"
     ConsentInfoItem:
       type: object
+      description: A Consent Information entry for a given User, scope(s) and Purpose.
       required:
         - scopes
         - purpose
@@ -613,6 +620,7 @@ components:
           $ref: "#/components/schemas/Purpose"
         consentId:
           type: string
+          maxLength: 256
           description: The unique identifier of the User Consent
           example: "consent-123456"
         consentStatus:
@@ -655,10 +663,12 @@ components:
       properties:
         title:
           type: string
+          maxLength: 256
           description: The localized text title
           example: "Consent Required"
         description:
           type: string
+          maxLength: 4096
           description: The localized text description
           example: "Please provide your consent to proceed with location verification for fraud prevention."
         consentTextId:
@@ -666,6 +676,7 @@ components:
         lastUpdate:
           type: string
           format: date-time
+          maxLength: 64
           description: |
             The date and time when this consent text version was last updated.
 
@@ -673,10 +684,13 @@ components:
           example: "2025-07-03T14:27:08.312+02:00"
     LanguageTags:
       type: string
+      pattern: '^[a-zA-Z]{2,3}(-[a-zA-Z0-9]{2,8})*$'
+      maxLength: 64
       description: List of Language tags that identify natural languages, following [BCP 47](https://tools.ietf.org/html/bcp47) standard.
       example: "en-US"
     ConsentTextId:
       type: string
+      maxLength: 256
       description: |
         This is a unique, immutable (e.g. hash-based) string identifier that designates a specific version of a legal text presented to the User during the Consent Capture process.
 
@@ -687,6 +701,7 @@ components:
     CreationDate:
       type: string
       format: date-time
+      maxLength: 64
       description: |
         The date and time at which the User Consent was created.
 
@@ -695,27 +710,14 @@ components:
     ExpirationDate:
       type: string
       format: date-time
+      maxLength: 64
       description: |
         The date and time at which the validity of the User Consent is set to expire or has expired (when applicable). The API Provider determines the expiration date based on its internal policies.
 
         It must follow [RFC 3339](https://datatracker.ietf.org/doc/html/rfc3339#section-5.6) and must have time zone. Recommended format is yyyy-MM-dd'T'HH:mm:ss.SSSZ (i.e. which allows 2023-07-03T14:27:08.312+02:00 or 2023-07-03T12:27:08.312Z).
       example: "2026-07-03T14:27:08.312+02:00"
     ErrorInfo:
-      type: object
-      required:
-        - status
-        - code
-        - message
-      properties:
-        status:
-          type: integer
-          description: HTTP response status code
-        code:
-          type: string
-          description: A human-readable code to describe the error
-        message:
-          type: string
-          description: A human-readable description of what the event represents
+      $ref: "../common/CAMARA_common.yaml#/components/schemas/ErrorInfo"
   responses:
     Generic400:
       description: Bad Request
@@ -775,30 +777,7 @@ components:
                 code: CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
                 message: The consentTextId provided is either invalid or does not exist.
     Generic401:
-      description: Unauthorized
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 401
-                  code:
-                    enum:
-                      - UNAUTHENTICATED
-          examples:
-            GENERIC_401_UNAUTHENTICATED:
-              description: Request cannot be authenticated
-              value:
-                status: 401
-                code: UNAUTHENTICATED
-                message: Request not authenticated due to missing, invalid, or expired credentials. A new authentication is required.
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
     Generic403:
       description: Forbidden
       headers:
@@ -857,37 +836,7 @@ components:
                 code: CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE
                 message: The requested scope(s) and Purpose combination is not allowed for this API Consumer.
     Generic404:
-      description: Not found
-      headers:
-        x-correlator:
-          $ref: "#/components/headers/x-correlator"
-      content:
-        application/json:
-          schema:
-            allOf:
-              - $ref: "#/components/schemas/ErrorInfo"
-              - type: object
-                properties:
-                  status:
-                    enum:
-                      - 404
-                  code:
-                    enum:
-                      - NOT_FOUND
-                      - IDENTIFIER_NOT_FOUND
-          examples:
-            GENERIC_404_NOT_FOUND:
-              description: Resource is not found
-              value:
-                status: 404
-                code: NOT_FOUND
-                message: The specified resource is not found.
-            GENERIC_404_IDENTIFIER_NOT_FOUND:
-              description: Some identifier cannot be matched to a device
-              value:
-                status: 404
-                code: IDENTIFIER_NOT_FOUND
-                message: Phone number not found.
+      $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"
     UpdateConsent404:
       description: Not found
       headers:
@@ -979,5 +928,4 @@ components:
                 message: The phone number is already identified by the access token.
   securitySchemes:
     openId:
-      type: openIdConnect
-      openIdConnectUrl: https://example.org/.well-known/openid-configuration
+      $ref: "../common/CAMARA_common.yaml#/components/securitySchemes/openId"
