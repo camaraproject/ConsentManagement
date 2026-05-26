@@ -193,4 +193,3 @@ Feature: CAMARA Consent Management API, vwip - Operation updateConsent
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
-
