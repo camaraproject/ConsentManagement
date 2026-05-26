@@ -282,7 +282,7 @@ Feature: CAMARA Consent Management API, vwip - Operation createConsent
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
-  
+
   @consent_management_createConsent_403.02_api_client_token_mismatch
   Scenario: Consent not created by the API client given in the access token
     # To test this, a token has to be obtained for a different client
