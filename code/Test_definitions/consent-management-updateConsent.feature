@@ -22,6 +22,9 @@ Feature: CAMARA Consent Management API, vwip - Operation updateConsent
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/UpdateConsentRequestBody"
+    And the path parameter "consentId" is set by default to an existing value
+
+  ############################ Happy Path Scenarios #############################################
 
   # Success scenarios
 
@@ -53,97 +56,141 @@ Feature: CAMARA Consent Management API, vwip - Operation updateConsent
     And the response property "$.creationDate" is present
     And the response property "$.expirationDate" is present and its value is in the future
 
-  # Generic 400 errors
+  ############################ Error Scenarios #############################################
 
-  @consent_management_updateConsent_400.1_no_request_body
+  # Syntax Error scenarios
+
+  @consent_management_updateConsent_400.01_schema_not_compliant
+  Scenario: Invalid Argument. Generic Syntax Exception
+    Given the request body is included but is not compliant with the schema at "#/components/schemas/UpdateConsentRequestBody"
+    When the request "updateConsent" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_updateConsent_400.02_no_request_body
   Scenario: Missing request body
     Given the request body is not included
     When the request "updateConsent" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_updateConsent_400.2_missing_consentStatus
-  Scenario: Missing required field consentStatus
-    Given the request body property "$.consentStatus" is not included
+  @consent_management_updateConsent_400.03_missing_required_property
+  Scenario: Error response for missing required property in request body
+    Given the request body property "<required_property>" is not included
+    When the request "updateConsent" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+    Examples:
+      | required_property |
+      | $.consentStatus   |
+
+  @consent_management_updateConsent_400.04_invalid_x-correlator
+  Scenario: Invalid x-correlator header
+    Given the header "x-correlator" does not comply with the schema at "#/components/schemas/XCorrelator"
     When the request "updateConsent" is sent
     Then the response status code is 400
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_updateConsent_400.3_consentStatus_invalid_value
+  @consent_management_updateConsent_400.05_consentStatus_invalid_value
   Scenario: The consentStatus field has an invalid value
     Given the request body property "$.consentStatus" is set to a value not in the allowed enum ["GRANTED", "DENIED"]
     When the request "updateConsent" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_updateConsent_400.4_x_correlator_not_compliant
-  Scenario: Invalid x-correlator header
-    Given the header "x-correlator" is set to a value which is not compliant with the schema at "#/components/schemas/XCorrelator"
-    And the request body is set to a valid request body
-    When the request "updateConsent" is sent
-    Then the response status code is 400
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-    And the response property "$.message" contains a user friendly text
+  # Service Error scenarios
+
+  # Authentication/Authorization errors
 
   # Generic 401 errors
 
-  @consent_management_updateConsent_401.1_no_authorization_header
-  Scenario: No Authorization header
-    Given the header "Authorization" is removed
-    And the request body is set to a valid request body
+  @consent_management_updateConsent_401.01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given the header "Authorization" is not sent
     When the request "updateConsent" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_updateConsent_401.2_expired_access_token
-  Scenario: Expired access token
+  @consent_management_updateConsent_401.02_expired_access_token
+  Scenario: Error response for expired access token
     Given the header "Authorization" is set to an expired access token
-    And the request body is set to a valid request body
     When the request "updateConsent" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_updateConsent_401.3_invalid_access_token
-  Scenario: Invalid access token
+  @consent_management_updateConsent_401.03_invalid_access_token
+  Scenario: Error response for invalid access token
     Given the header "Authorization" is set to an invalid access token
-    And the request body is set to a valid request body
     When the request "updateConsent" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
   # Generic 403 errors
 
-  @consent_management_updateConsent_403.1_invalid_token_permissions
-  Scenario: Inconsistent access token permissions
-    # To test this scenario, it will be necessary to obtain a token without the required scope
-    Given the header "Authorization" is set to an access token without the required scope
-    And the request body is set to a valid request body
+  @consent_management_updateConsent_403.01_missing_access_token_scope
+  Scenario: Missing access token scope
+    Given the header "Authorization" is set to an access token that does not include scope "consent-management:update"
     When the request "updateConsent" is sent
     Then the response status code is 403
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_updateConsent_403.02_api_client_token_mismatch
+  Scenario: Consent not managed by the API client given in the access token
+    # To test this, a token has to be obtained for a different client
+    Given the header "Authorization" is set to a valid access token emitted to an API client which did not have rights to access/manage the Consent
+    When the request "updateConsent" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
   # Generic 404 errors
 
-  @consent_management_updateConsent_404.1_consent_not_found
-  Scenario: Consent ID not found
-    Given the path parameter "consentId" is set to a value that does not exist
+  @consent_management_updateConsent_404.01_not_found
+  Scenario: non-existing consentId
+    Given the path parameter "consentId" is set to a random UUID
     When the request "updateConsent" is sent
     Then the response status code is 404
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 404
     And the response property "$.code" is "NOT_FOUND"
     And the response property "$.message" contains a user friendly text
+

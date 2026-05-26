@@ -25,6 +25,8 @@ Feature: CAMARA Consent Management API, vwip - Operation retrieveConsentInfo
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
     And the request body is set by default to a request body compliant with the schema at "#/components/schemas/RetrieveConsentInfoRequestBody"
 
+  ############################ Happy Path Scenarios #############################################
+
   # Success scenarios
 
   @consent_management_retrieveConsentInfo_01_generic_success
@@ -187,6 +189,8 @@ Feature: CAMARA Consent Management API, vwip - Operation retrieveConsentInfo
     And the response property "$[*].creationDate" is present and its value is in the past
     And the response property "$[*].expirationDate" is present and its value is in the past
 
+  ############################ Error Scenarios #############################################
+
   # Error scenarios for management of input parameter phoneNumber (C02)
 
   @consent_management_retrieveConsentInfo_C02.01_phone_number_not_schema_compliant
@@ -239,114 +243,166 @@ Feature: CAMARA Consent Management API, vwip - Operation retrieveConsentInfo
     And the response property "$.code" is "SERVICE_NOT_APPLICABLE"
     And the response property "$.message" contains a user friendly text
 
-  # Generic 400 errors
+  # Syntax Error scenarios
 
-  @consent_management_retrieveConsentInfo_400.1_no_request_body
-  Scenario: Missing request body
-    Given the request body is not included
+  @consent_management_retrieveConsentInfo_400.01_schema_not_compliant
+  Scenario: Invalid Argument. Generic Syntax Exception
+    Given the request body is included but is not compliant with the schema at "#/components/schemas/RetrieveConsentInfoRequestBody"
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_retrieveConsentInfo_400.2_missing_required_property
-  Scenario Outline: Missing required property in request body
-    Given the request body property "<input_property>" is not included
+  @consent_management_retrieveConsentInfo_400.02_no_request_body
+  Scenario: Missing request body
+    Given the request body is not included
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_retrieveConsentInfo_400.03_empty_request_body
+  # 3-legged scenario only. It happens when request body has at least one required property
+  # NOTE: Recommended value for "$.message" (NOT NORMATIVE) is "Missing mandatory parameter(s)"
+  Scenario: Empty object as request body
+    Given the request body is set to {}
+    When the request "retrieveConsentInfo" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_retrieveConsentInfo_400.04_missing_required_property
+  Scenario Outline: Error response for missing required property in request body
+    Given the request body property "<required_property>" is not included
+    When the request "retrieveConsentInfo" is sent
+    Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
     Examples:
-      | input_property      |
-      | $.scopes            |
-      | $.purpose           |
-      | $.requestConsentText |
+      | required_property       |
+      | $.scopes                |
+      | $.purpose               |
+      | $.requestConsentText    |
 
-  @consent_management_retrieveConsentInfo_400.3_scopes_empty_array
+  @consent_management_retrieveConsentInfo_400.05_invalid_x-correlator
+  Scenario: Invalid x-correlator header
+    Given the header "x-correlator" does not comply with the schema at "#/components/schemas/XCorrelator"
+    When the request "retrieveConsentInfo" is sent
+    Then the response status code is 400
+    And the response property "$.status" is 400
+    And the response property "$.code" is "INVALID_ARGUMENT"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_retrieveConsentInfo_400.06_scopes_empty_array
   Scenario: The scopes field is an empty array
     Given the request body property "$.scopes" is set to []
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_retrieveConsentInfo_400.4_purpose_invalid_format
+  @consent_management_retrieveConsentInfo_400.07_purpose_invalid_format
   Scenario: The purpose field does not comply with the required format
     Given the request body property "$.purpose" does not comply with the OAS schema at "#/components/schemas/Purpose"
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 400
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 400
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_retrieveConsentInfo_400.5_x_correlator_not_compliant
-  Scenario: Invalid x-correlator header
-    Given the header "x-correlator" is set to a value which is not compliant with the schema at "#/components/schemas/XCorrelator"
-    And the request body is set to a valid request body
-    When the request "retrieveConsentInfo" is sent
-    Then the response status code is 400
-    And the response property "$.status" is 400
-    And the response property "$.code" is "INVALID_ARGUMENT"
-    And the response property "$.message" contains a user friendly text
+  # Service Error scenarios
+
+  # Authentication/Authorization errors
 
   # Generic 401 errors
 
-  @consent_management_retrieveConsentInfo_401.1_no_authorization_header
-  Scenario: No Authorization header
-    Given the header "Authorization" is removed
-    And the request body is set to a valid request body
+  @consent_management_retrieveConsentInfo_401.01_no_authorization_header
+  Scenario: Error response for no header "Authorization"
+    Given the header "Authorization" is not sent
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_retrieveConsentInfo_401.2_expired_access_token
-  Scenario: Expired access token
+  @consent_management_retrieveConsentInfo_401.02_expired_access_token
+  Scenario: Error response for expired access token
     Given the header "Authorization" is set to an expired access token
-    And the request body is set to a valid request body
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_retrieveConsentInfo_401.3_invalid_access_token
-  Scenario: Invalid access token
+  @consent_management_retrieveConsentInfo_401.03_invalid_access_token
+  Scenario: Error response for invalid access token
     Given the header "Authorization" is set to an invalid access token
-    And the request body is set to a valid request body
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 401
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 401
     And the response property "$.code" is "UNAUTHENTICATED"
     And the response property "$.message" contains a user friendly text
 
   # Generic 403 errors
 
-  @consent_management_retrieveConsentInfo_403.1_invalid_token_permissions
-  Scenario: Inconsistent access token permissions
-    # To test this scenario, it will be necessary to obtain a token without the required scope
-    Given the header "Authorization" is set to an access token without the required scope
-    And the request body is set to a valid request body
+  @consent_management_retrieveConsentInfo_403.01_missing_access_token_scope
+  Scenario: Missing access token scope
+    Given the header "Authorization" is set to an access token that does not include scope "consent-management:retrieve-info"
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 403
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
+    And the response property "$.status" is 403
+    And the response property "$.code" is "PERMISSION_DENIED"
+    And the response property "$.message" contains a user friendly text
+
+  @consent_management_retrieveConsentInfo_403.02_api_client_token_mismatch
+  Scenario: Consent info not accessible by the API client given in the access token
+    # To test this, a token has to be obtained for a different client
+    Given the header "Authorization" is set to a valid access token emitted to an API client which did not have rights to access/manage the Consent
+    When the request "retrieveConsentInfo" is sent
+    Then the response status code is 403
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 403
     And the response property "$.code" is "PERMISSION_DENIED"
     And the response property "$.message" contains a user friendly text
 
   # Specific 403 error scenarios
 
-  @consent_management_retrieveConsentInfo_403.2_not_allowed_scopes_purpose
+  @consent_management_retrieveConsentInfo_403.03_not_allowed_scopes_purpose
   # e.g. the API Consumer has not onboarded the appropriate API(s) with the API Provider for the declared purpose.
   Scenario: The requested scope(s) and purpose combination is not allowed
     Given a valid phone number identified by the token or provided in the request body
     And the request body properties "$.scopes" and "$.purpose" are set to a combination not allowed for the API Consumer
     When the request "retrieveConsentInfo" is sent
     Then the response status code is 403
+    And the response header "x-correlator" has same value as the request header "x-correlator"
+    And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 403
     And the response property "$.code" is "CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE"
     And the response property "$.message" contains a user friendly text
