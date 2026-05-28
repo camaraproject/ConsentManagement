@@ -1,4 +1,4 @@
-Feature: CAMARA Consent Management API, vwip - Operation updateConsent
+Feature: CAMARA Consent Management API, v0.1.0-rc.1 - Operation updateConsent
 
   # Input to be provided by the implementation to the tester
   #
@@ -17,7 +17,7 @@ Feature: CAMARA Consent Management API, vwip - Operation updateConsent
 
   Background: Common updateConsent setup
     Given an environment at "apiRoot"
-    And the resource "/consent-management/vwip/consents/{consentId}"
+    And the resource "/consent-management/v0.1rc1/consents/{consentId}"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"

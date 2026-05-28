@@ -1,0 +1,13 @@
+repository:
+  repository_name: ConsentManagement
+  release_tag: r1.1
+  release_type: pre-release-rc
+  release_date: null
+  src_commit_sha: 578d21f43445988f97843812841bb81cc78d2e23
+apis:
+- api_name: consent-management
+  api_version: 0.1.0-rc.1
+  api_title: Consent Management
+dependencies:
+  commonalities_release: r4.3 (0.8.0)
+  identity_consent_management_release: r4.2 (0.5.0)
