@@ -31,8 +31,16 @@ Sandbox API Repository to describe, develop, document, and test the ConsentManag
 
 ## Release Information
 
-The repository has no (pre)releases yet, work in progress is within the main branch.
+> [!NOTE]
+> This repository has only pre-release versions available yet. Pre-releases are for testing and may change before public release.
 
+* The latest pre-release is [r1.1](https://github.com/camaraproject/ConsentManagement/releases/tag/r1.1) (release candidate), with the following API versions:
+  * **consent-management 0.1.0-rc.1**
+  [[YAML]](https://github.com/camaraproject/ConsentManagement/blob/r1.1/code/API_definitions/consent-management.yaml)  [[ReDoc]](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/camaraproject/ConsentManagement/r1.1/code/API_definitions/consent-management.yaml&nocors)  [[Swagger]](https://camaraproject.github.io/swagger-ui/?url=https://raw.githubusercontent.com/camaraproject/ConsentManagement/r1.1/code/API_definitions/consent-management.yaml)
+
+* For changes see [CHANGELOG](https://github.com/camaraproject/ConsentManagement/tree/main/CHANGELOG)
+
+_The above section is automatically synchronized by CAMARA project-administration._
 <!-- CAMARA:RELEASE-INFO:END -->
 
 ## Contributing
