@@ -2,7 +2,7 @@ repository:
   repository_name: ConsentManagement
   release_tag: r1.1
   release_type: pre-release-rc
-  release_date: null
+  release_date: '2026-06-03T07:09:46Z'
   src_commit_sha: 578d21f43445988f97843812841bb81cc78d2e23
 apis:
 - api_name: consent-management
