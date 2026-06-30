@@ -1,4 +1,4 @@
-Feature: CAMARA Consent Management API, vwip - Operation createConsent
+Feature: CAMARA Consent Management API, v0.1.0 - Operation createConsent
 
   # Input to be provided by the implementation to the tester
   #
@@ -19,7 +19,7 @@ Feature: CAMARA Consent Management API, vwip - Operation createConsent
 
   Background: Common createConsent setup
     Given an environment at "apiRoot"
-    And the resource "/consent-management/vwip/consents"
+    And the resource "/consent-management/v0.1/consents"
     And the header "Content-Type" is set to "application/json"
     And the header "Authorization" is set to a valid access token
     And the header "x-correlator" complies with the schema at "#/components/schemas/XCorrelator"
