@@ -83,7 +83,7 @@ Feature: CAMARA Consent Management API, vwip - Operation updateConsent
     And the response property "$.message" contains a user friendly text
 
   @consent_management_updateConsent_400.03_missing_required_property
-  Scenario: Error response for missing required property in request body
+  Scenario Outline: Error response for missing required property in request body
     Given the request body property "<required_property>" is not included
     When the request "updateConsent" is sent
     Then the response status code is 400

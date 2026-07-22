@@ -154,7 +154,7 @@ Feature: CAMARA Consent Management API, vwip - Operation createConsent
     And the response property "$.code" is "INVALID_ARGUMENT"
     And the response property "$.message" contains a user friendly text
 
-  @consent_management_createConsent_400.04_missing_required_property-
+  @consent_management_createConsent_400.04_missing_required_property
   Scenario Outline: Error response for missing required property in request body
     Given the request body property "<required_property>" is not included
     When the request "createConsent" is sent
