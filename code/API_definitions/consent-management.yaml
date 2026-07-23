@@ -762,7 +762,7 @@ components:
                   code:
                     enum:
                       - INVALID_ARGUMENT
-                      - CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
+                      - CONSENT_MANAGEMENT.INVALID_CONSENT_TEXT_ID
           examples:
             GENERIC_400_INVALID_ARGUMENT:
               description: Invalid Argument. Generic Syntax Exception
@@ -774,7 +774,7 @@ components:
               description: The provided consentTextId does not match any valid consent text version available for the requested scope(s) and Purpose.
               value:
                 status: 400
-                code: CONSENT_MGMT.INVALID_CONSENT_TEXT_ID
+                code: CONSENT_MANAGEMENT.INVALID_CONSENT_TEXT_ID
                 message: The consentTextId provided is either invalid or does not exist.
     Generic401:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic401"
@@ -821,7 +821,7 @@ components:
                   code:
                     enum:
                       - PERMISSION_DENIED
-                      - CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE
+                      - CONSENT_MANAGEMENT.NOT_ALLOWED_SCOPES_PURPOSE
           examples:
             GENERIC_403_PERMISSION_DENIED:
               description: Permission denied. OAuth2 token access does not have the required scope or when the user fails operational security
@@ -833,7 +833,7 @@ components:
               description: The requested scope(s) and Purpose combination is not allowed for the API Consumer, e.g. the API Consumer has not onboarded the appropriate API(s) with the API Provider for the declared Purpose.
               value:
                 status: 403
-                code: CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE
+                code: CONSENT_MANAGEMENT.NOT_ALLOWED_SCOPES_PURPOSE
                 message: The requested scope(s) and Purpose combination is not allowed for this API Consumer.
     Generic404:
       $ref: "../common/CAMARA_common.yaml#/components/responses/Generic404"

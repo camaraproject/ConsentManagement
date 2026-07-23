@@ -404,5 +404,5 @@ Feature: CAMARA Consent Management API, vwip - Operation retrieveConsentInfo
     And the response header "x-correlator" has same value as the request header "x-correlator"
     And the response header "Content-Type" is "application/json"
     And the response property "$.status" is 403
-    And the response property "$.code" is "CONSENT_MGMT.NOT_ALLOWED_SCOPES_PURPOSE"
+    And the response property "$.code" is "CONSENT_MANAGEMENT.NOT_ALLOWED_SCOPES_PURPOSE"
     And the response property "$.message" contains a user friendly text
